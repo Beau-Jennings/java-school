@@ -1,5 +1,6 @@
 package com.lambdaschool.schools.services;
 
+import com.lambdaschool.schools.exceptions.ResourceNotFoundException;
 import com.lambdaschool.schools.models.Course;
 import com.lambdaschool.schools.models.Instructor;
 import com.lambdaschool.schools.models.StudCourses;
@@ -11,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +20,7 @@ import java.util.List;
  */
 @Service(value = "coursesService")
 public class CoursesServiceImpl
-    implements CoursesService
+        implements CoursesService
 {
     /**
      * Connects this service to the Course table.
@@ -49,8 +49,8 @@ public class CoursesServiceImpl
          * iterate over the iterator set and add each element to an array list.
          */
         courserepos.findAll()
-            .iterator()
-            .forEachRemaining(list::add);
+                .iterator()
+                .forEachRemaining(list::add);
         return list;
     }
 
@@ -58,7 +58,7 @@ public class CoursesServiceImpl
     public Course findCourseById(long id)
     {
         return courserepos.findById(id)
-            .orElseThrow(() -> new EntityNotFoundException("Course id " + id + " not found!"));
+                .orElseThrow(() -> new ResourceNotFoundException("Course id " + id + " not found!"));
     }
 
     @Transactional
@@ -66,7 +66,7 @@ public class CoursesServiceImpl
     public void delete(long id)
     {
         courserepos.findById(id)
-            .orElseThrow(() -> new EntityNotFoundException("Course id " + id + " not found!"));
+                .orElseThrow(() -> new ResourceNotFoundException("Course id " + id + " not found!"));
         courserepos.deleteById(id);
     }
 
@@ -79,30 +79,30 @@ public class CoursesServiceImpl
         if (course.getCourseid() != 0)
         {
             Course oldCourse = courserepos.findById(course.getCourseid())
-                .orElseThrow(() -> new EntityNotFoundException("Course id " + course.getCourseid() + " not found!"));
+                    .orElseThrow(() -> new ResourceNotFoundException("Course id " + course.getCourseid() + " not found!"));
 
             newCourse.setCourseid(course.getCourseid());
         }
 
         newCourse.setCoursename(course.getCoursename());
         Instructor newInstructor = instructorrepos.findById(course.getInstructor()
-            .getInstructorid())
-            .orElseThrow(() -> new EntityNotFoundException("Instructor id " + course.getInstructor()
-                .getInstructorid() + " not found!"));
+                .getInstructorid())
+                .orElseThrow(() -> new ResourceNotFoundException("Instructor id " + course.getInstructor()
+                        .getInstructorid() + " not found!"));
         newCourse.setInstructor(newInstructor);
 
         newCourse.getStudents()
-            .clear();
+                .clear();
         for (StudCourses sc : course.getStudents())
         {
             Student newStudent = studentrepos.findById(sc.getStudent()
-                .getStudentid())
-                .orElseThrow(() -> new EntityNotFoundException("Instructor id " + sc.getStudent()
-                    .getStudentid() + " not found!"));
+                    .getStudentid())
+                    .orElseThrow(() -> new ResourceNotFoundException("Instructor id " + sc.getStudent()
+                            .getStudentid() + " not found!"));
 
             newCourse.getStudents()
-                .add(new StudCourses(newCourse,
-                    newStudent));
+                    .add(new StudCourses(newCourse,
+                            newStudent));
         }
 
         return courserepos.save(newCourse);

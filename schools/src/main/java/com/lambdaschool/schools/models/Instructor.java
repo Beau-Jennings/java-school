@@ -3,6 +3,7 @@ package com.lambdaschool.schools.models;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +13,7 @@ import java.util.List;
 @Entity
 @Table(name = "instructors")
 public class Instructor
-    extends Auditable
+        extends Auditable
 {
     /**
      * The primary key (long) of the instructor table
@@ -25,6 +26,7 @@ public class Instructor
      * The Instructor's name (String)
      */
     @Column(nullable = false)
+    @Size(min=2, max=30, message="Instructor name must be between 2 and 30 characters")
     private String name;
 
     /**
@@ -32,10 +34,10 @@ public class Instructor
      * Forms a one to many relationship with courses. One instructor to many courses.
      */
     @OneToMany(mappedBy = "instructor",
-        cascade = CascadeType.ALL,
-        orphanRemoval = true)
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
     @JsonIgnoreProperties(value = "instructor",
-        allowSetters = true)
+            allowSetters = true)
     private List<Course> courses = new ArrayList<>();
 
     /**
@@ -51,7 +53,7 @@ public class Instructor
      * @param name The name (String) for the new instructor
      */
     public Instructor(
-        String name)
+            String name)
     {
         this.name = name;
     }

@@ -3,6 +3,7 @@ package com.lambdaschool.schools.models;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -12,7 +13,7 @@ import java.util.Set;
 @Entity
 @Table(name = "students")
 public class Student
-    extends Auditable
+        extends Auditable
 {
     /**
      * The primary key (long) of the students table
@@ -25,7 +26,8 @@ public class Student
      * The name student (String)
      */
     @Column(nullable = false,
-        unique = true)
+            unique = true)
+    @Size(min=2, max=30, message="Student name must be between 2 and 30 characters")
     private String name;
 
     /**
@@ -33,10 +35,10 @@ public class Student
      * connects students to the student course combination
      */
     @OneToMany(mappedBy = "student",
-        cascade = CascadeType.ALL,
-        orphanRemoval = true)
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
     @JsonIgnoreProperties(value = "student",
-        allowSetters = true)
+            allowSetters = true)
     private Set<StudCourses> courses = new HashSet<>();
 
     /**
